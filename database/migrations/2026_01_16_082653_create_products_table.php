@@ -9,15 +9,15 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->text('description');
             $table->integer('price');
+            $table->string('image_url')->default('https://via.placeholder.com/150');
             $table->integer('stock');
-            $table->string('image')->nullable(); // Untuk foto produk
             $table->timestamps();
         });
     }

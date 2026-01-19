@@ -9,6 +9,11 @@ class Order extends Model
 {
     use HasFactory;
 
-    // Tambahkan ini:
-    protected $fillable = ['product_names', 'total_price'];
+    // Tambahkan ini agar data bisa diisi lewat Flutter
+    protected $fillable = [
+        'user_email',
+        'product_name',
+        'price',
+        'status'
+    ];
 }

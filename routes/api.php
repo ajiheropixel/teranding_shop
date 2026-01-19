@@ -1,22 +1,29 @@
 <?php
 
-use App\Http\Controllers\Api\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\UserController;
+use App\Models\Order;
 
-// Jalur yang bisa diakses publik (Tanpa Login)
+// Route Public
 Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
-// TAMBAHKAN ->name('login') di sini agar error merah di Laravel hilang
-Route::post('/login', [AuthController::class, 'login'])->name('login');
-
-// Jalur yang harus Login dulu
-Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::put('/user/{id}/role', [AuthController::class, 'updateRole']);
+Route::get('/products', [ProductController::class, 'index']);
+Route::get('/products/search', function (Illuminate\Http\Request $request) {
+    $query = $request->search;
+    return \App\Models\Product::where('name', 'like', "%$query%")->get();
 });
 
-// Jalur produk sudah di luar, ini sudah BENAR
-Route::get('/products', [ProductController::class, 'index']);
-Route::post('/checkout', [App\Http\Controllers\OrderController::class, 'store']);
+Route::post('/checkout', [OrderController::class, 'store']);
+Route::post('/user/update', [UserController::class, 'update']);
+
+// Route Protected (Opsional)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
+Route::get('/orders', function () {
+    return response()->json(Order::all());
+});

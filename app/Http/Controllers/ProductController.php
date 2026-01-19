@@ -7,23 +7,39 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    // Fungsi untuk mengambil semua data produk
     public function index()
     {
-        $products = Product::all();
-        return response()->json($products);
+        $products = Product::all()->map(function ($product) {
+            // Tambahkan domain URL ke path gambar
+            $product->image = asset('storage/' . $product->image);
+            return $product;
+        });
+
+        return response()->json($products, 200);
     }
 
-    // Fungsi untuk menambah produk baru (bisa dipakai nanti)
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required',
             'price' => 'required|numeric',
-            'stock' => 'required|integer',
+            'stock' => 'required|numeric',
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $product = Product::create($validated);
+        $path = $request->file('image')->store('products', 'public');
+
+        $product = Product::create([
+            'name' => $request->name,
+            'description' => $request->description ?? '',
+            'price' => $request->price,
+            'stock' => $request->stock,
+            'image' => $path,
+        ]);
+
+        // Ubah response image agar Flutter langsung dapat URL lengkap
+        $product->image = asset('storage/' . $product->image);
+
         return response()->json($product, 201);
     }
 }

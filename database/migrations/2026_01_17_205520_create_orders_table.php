@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('orders', function (Blueprint $count) {
-            $count->id();
-            $count->string('product_names'); // Nama-nama produk
-            $count->integer('total_price');
-            $count->timestamps();
+        Schema::create('orders', function (Blueprint $table) {
+            $table->id();
+            $table->string('user_email');
+            $table->string('product_name');
+            $table->integer('price');
+            $table->string('status')->default('pending');
+            $table->timestamps();
         });
     }
 

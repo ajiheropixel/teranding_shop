@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->text('description');
+            $table->text('description')->nullable()->change();
             $table->integer('price');
             $table->string('image_url')->default('https://via.placeholder.com/150');
             $table->integer('stock');
